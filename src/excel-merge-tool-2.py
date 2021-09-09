@@ -5,7 +5,7 @@ from controller import Controller
 
 def main():
     model = Model()
-    view = View(model)
+    view = View(model, title="Excel Merge Tool 2")
     controller = Controller(model, view)
     controller.start()
 
