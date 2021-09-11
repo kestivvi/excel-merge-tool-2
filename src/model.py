@@ -2,6 +2,7 @@ from typing import List
 
 class Model:
     inputDirectory: str = None
+    outputFilename: str = "/Directors Basic working file - output.xlsm"
     path_to_save: str = None
     files_to_check: List[str] = [
             "Directors Basic working file.xlsm",

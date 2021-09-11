@@ -1,7 +1,10 @@
+from datetime import datetime
 import tkinter, tkinter.filedialog, tkinter.messagebox
 import threading
 
 from typing import List
+
+from openpyxl.reader import excel
 from model import Model
 from view_abc import View, BtnStatus
 from controller_abc import Controller
@@ -110,12 +113,68 @@ class View(View):
         return tkinter.filedialog.askdirectory(title=title)
 
 
-    def getStartDate(self) -> str:
-        return self.start_date.get()
+    def _checkDate(self, date: str) -> datetime:
+        """Checks if the date is correct.
+        
+        Raises
+        ------
+        ValueError
+            If date is not correct.
+        
+        Returns
+        -------
+        datetime
+            datetime object representing the given string with date.
+        """
+
+        date = str(date).strip()
+
+        if date == "":
+            raise ValueError("Date cannot be empty")
+
+        date = date.split("-")
+        year = int(date[0])
+        month = int(date[1])
+        day = int(date[2])
+
+        if month < 1:
+            raise ValueError("Month cannot be lower than 1")
+        if month > 12:
+            raise ValueError("Month cannot be greater than 12")
+        if day < 1:
+            raise ValueError("Day cannot be lower than 1")
+        if day > 31:
+            raise ValueError("Day cannot be greater than 31")
+        
+        date = datetime(year, month, day)
+        return date
 
 
-    def getEndDate(self) -> str:
-        return self.end_date.get()
+    def _getDate(self, dateStringEntry: tkinter.Entry) -> datetime:
+        """Get datetime object from string entry.
+
+        Returns
+        -------
+        datetime
+            If there were no errors.
+        None
+            If errors occurred, for example date was in wrong format.
+        """
+
+        date = dateStringEntry.get()
+        try:
+            return self._checkDate(date)
+        except ValueError as e:
+            self.alert_error(f"Dates should be in format YYYY-MM-DD!\nERROR: {e}")
+            return None
+
+
+    def getStartDate(self) -> datetime:
+        return self._getDate(self.start_date)
+        
+
+    def getEndDate(self) -> datetime:        
+        return self._getDate(self.end_date)
 
 
     def setBtnMergeStatus(self, status: BtnStatus) -> None:

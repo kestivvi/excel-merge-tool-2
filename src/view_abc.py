@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from enum import Enum
 from typing import List
 
@@ -29,15 +30,31 @@ class View(ABC):
     def askForInputDirectory(self, title: str = "Choose input directory") -> str:
         """Ask user to select input files."""
 
-    # TODO: getStartDate and getEndDate should return datetime object
+
     @abstractmethod
-    def getStartDate(self) -> str:
-        """Return Start Date choosen by the user."""
+    def getStartDate(self) -> datetime:
+        """Get the Start Date choosen by the user.
+        
+        Returns
+        -------
+        datetime
+            If there were no erros.
+        None
+            If there were errors.
+        """
 
 
     @abstractmethod
-    def getEndDate(self) -> str:
-        """Return End Date choosen by the user."""
+    def getEndDate(self) -> datetime:
+        """Get the End Date choosen by the user.
+        
+        Returns
+        -------
+        datetime
+            If there were no erros.
+        None
+            If there were errors.
+        """
 
 
     @abstractmethod
