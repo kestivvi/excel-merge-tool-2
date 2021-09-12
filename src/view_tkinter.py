@@ -13,10 +13,15 @@ from controller_abc import Controller
 class View(View):
     # model: Model
     # window: tkinter.Tk
+    # start_date_var: tkinter.StringVar
+    # end_date_var: tkinter.StringVar
+    # start_date_entry: tkinter.Entry
+    # end_date_entry: tkinter.Entry
     # input_directory_text: tkinter.StringVar
     # save_location_text = tkinter.StringVar
     # progress_text: tkinter.StringVar
     # btn_merge_and_save: tkinter.Button
+
 
 
     def __init__(self, model: Model, title: str, icon_path: str = "./icon.ico") -> None:
@@ -25,6 +30,12 @@ class View(View):
         self.window = tkinter.Tk()
         self.window.title(title)
         self.window.iconbitmap(icon_path)
+
+        self.start_date_var = tkinter.StringVar(self.window)
+        self.start_date_var.trace_add(mode=("write", "unset"), callback=lambda a, b, c: self.checkBtnMergeStatus())
+
+        self.end_date_var = tkinter.StringVar(self.window)
+        self.end_date_var.trace_add(mode=("write", "unset"), callback=lambda a, b, c: self.checkBtnMergeStatus())
 
         self.input_directory_text = tkinter.StringVar(self.window)
         self.save_location_text = tkinter.StringVar(self.window)
@@ -57,25 +68,25 @@ class View(View):
 
         # Dates
         tkinter.Label(
-            self.window, 
-            text="Dates should be in format: YYYY-MM-DD"
-        ).grid(row=2, column=2, columnspan=2, rowspan=2, padx=15, sticky='W')
-
-        tkinter.Label(
             self.window,
             text="Start date:"
         ).grid(row=2, column=0, pady=5, sticky='E')
         
-        self.start_date = tkinter.Entry()
-        self.start_date.grid(row=2, column=1, pady=5, sticky='W')
+        self.start_date_entry = tkinter.Entry(textvariable=self.start_date_var)
+        self.start_date_entry.grid(row=2, column=1, pady=5, sticky='W')
 
         tkinter.Label(
             self.window,
             text="End date:"
         ).grid(row=3, column=0, pady=5, sticky='E')
         
-        self.end_date = tkinter.Entry()
-        self.end_date.grid(row=3, column=1, pady=5, sticky='W')
+        self.end_date_entry = tkinter.Entry(textvariable=self.end_date_var)
+        self.end_date_entry.grid(row=3, column=1, pady=5, sticky='W')
+
+        tkinter.Label(
+            self.window, 
+            text="Dates should be in format: YYYY-MM-DD"
+        ).grid(row=2, column=2, columnspan=2, rowspan=2, padx=15, sticky='W')
 
 
         # Info about input and output
@@ -170,20 +181,30 @@ class View(View):
 
 
     def getStartDate(self) -> datetime:
-        return self._getDate(self.start_date)
+        return self._getDate(self.start_date_entry)
         
 
     def getEndDate(self) -> datetime:        
-        return self._getDate(self.end_date)
+        return self._getDate(self.end_date_entry)
 
 
     def setBtnMergeStatus(self, status: BtnStatus) -> None:
         self.btn_merge_and_save["state"] = status.value
 
-    # TODO: This should take into the considerations the dates
+
     def checkBtnMergeStatus(self) -> None:
-        if self.model.path_to_save is not None and self.model.inputDirectory is not None:
+        start_date = self.start_date_entry.get().strip()
+        end_date = self.end_date_entry.get().strip()
+    
+        if (
+            self.model.path_to_save is not None 
+            and self.model.inputDirectory is not None
+            and start_date != ""
+            and end_date != ""
+        ):
             self.setBtnMergeStatus(BtnStatus.NORMAL)
+        else:
+            self.setBtnMergeStatus(BtnStatus.DISABLED)
 
 
     def setProgressText(self, text: str) -> None:

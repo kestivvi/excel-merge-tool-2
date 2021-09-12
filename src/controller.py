@@ -2,8 +2,6 @@ from typing import List
 from os import path
 import datetime
 
-from openpyxl.descriptors.base import Bool
-
 from model import Model
 from view_abc import View, BtnStatus
 import excel
@@ -42,7 +40,7 @@ class Controller:
         self.view.checkBtnMergeStatus()
         
 
-    def checkDates(self, date_from: datetime, date_to: datetime) -> Bool:
+    def _checkDates(self, date_from: datetime, date_to: datetime) -> bool:
         if date_from > date_to:
             self.view.alert_error("Dates should be in format YYYY-MM-DD!\nERROR: The Start Date cannot be greater than the End Date!")
             return False
@@ -55,7 +53,7 @@ class Controller:
         date_from = self.view.getStartDate()
         date_to = self.view.getEndDate()
 
-        if not self.checkDates(date_from, date_to):
+        if not self._checkDates(date_from, date_to):
             return
 
         self.view.setBtnMergeStatus(BtnStatus.DISABLED)

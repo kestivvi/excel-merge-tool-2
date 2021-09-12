@@ -1,4 +1,5 @@
 from datetime import datetime
+import enum
 import openpyxl as xl
 
 from typing import Callable, List
@@ -226,8 +227,8 @@ def copy_all(input_directory: str, filenames: List[str], path_to_save: str, date
         "I3"
     ]
 
-    for case in simple_cases:
-        set_progress_text_fn(case)
+    for i, case in enumerate(simple_cases):
+        set_progress_text_fn(f"{i+1}/9 " + case)
         wb_in = xl.load_workbook(input_directory + f"/{case}.xlsx")
         copy_simple_case(output_workbook[case], wb_in.active)
     
@@ -235,14 +236,14 @@ def copy_all(input_directory: str, filenames: List[str], path_to_save: str, date
     ######################################
     ### Copy "Recruits (FO)" and "NOFOs who paid joining fee" case
 
-    set_progress_text_fn("Recruits (FO) and NOFOs")
+    set_progress_text_fn("5/9 Recruits (FO) and NOFOs")
     wb_in = xl.load_workbook(input_directory + "/Recruits (FO).xlsx")
     copy_recruits(wb_in.active, output_workbook["Recruits (FO)"], output_workbook["NOFOs who paid joining fee"])
     
     ######################################
     ### Copy "Skincare Sets" case
     
-    set_progress_text_fn("Skincare Sets")
+    set_progress_text_fn("6/9 Skincare Sets")
     # Make "Consultant number - Member group" mapping
     titles_reports_wb = xl.load_workbook(input_directory + "/Titles Report Mature Markets.xlsx")
     mapping = Make_TitlesReports_Mapping(titles_reports_wb)
@@ -254,7 +255,7 @@ def copy_all(input_directory: str, filenames: List[str], path_to_save: str, date
     ######################################
     ### Copy "Catalogue BP Sales" oraz "Titles" cases
 
-    set_progress_text_fn("Catalogue BP Sales and Titles")
+    set_progress_text_fn("7/9 Catalogue BP Sales and Titles")
     copy_catalogue_titles_case(
         output_workbook["Catalogue BP Sales"],
         output_workbook["Titles"],
@@ -265,7 +266,7 @@ def copy_all(input_directory: str, filenames: List[str], path_to_save: str, date
     ######################################
     ### Copy "YTD"
 
-    set_progress_text_fn("YTD")
+    set_progress_text_fn("8/9 YTD")
     ws_in = xl.load_workbook(input_directory + "/YTD.xlsx")
     copy_YTD_case(output_workbook["YTD"], ws_in.active, mapping)
 
@@ -273,7 +274,7 @@ def copy_all(input_directory: str, filenames: List[str], path_to_save: str, date
     ######################################
     ### Copy "VIP Recruits"
 
-    set_progress_text_fn("VIP Recruits")
+    set_progress_text_fn("9/9 VIP Recruits")
 
     copy_VIP_Recruits_case(output_workbook["VIP Recruits"], titles_reports_wb["VIP with BP >0"], date_from, date_to)
 
