@@ -2,9 +2,9 @@ from datetime import datetime
 import tkinter, tkinter.filedialog, tkinter.messagebox
 import threading
 
-from typing import List
+from events import EventType
+import events
 
-from openpyxl.reader import excel
 from model import Model
 from view_abc import View, BtnStatus
 from controller_abc import Controller
@@ -31,11 +31,14 @@ class View(View):
         self.window.title(title)
         self.window.iconbitmap(icon_path)
 
+        events.subscribe(EventType.ON_START_DATE_VAR_CHANGE, self.checkBtnMergeStatus)
+        events.subscribe(EventType.ON_END_DATE_VAR_CHANGE, self.checkBtnMergeStatus)
+
         self.start_date_var = tkinter.StringVar(self.window)
-        self.start_date_var.trace_add(mode=("write", "unset"), callback=lambda a, b, c: self.checkBtnMergeStatus())
+        self.start_date_var.trace_add(mode=("write", "unset"), callback=lambda a, b, c: events.postEvent(EventType.ON_START_DATE_VAR_CHANGE))
 
         self.end_date_var = tkinter.StringVar(self.window)
-        self.end_date_var.trace_add(mode=("write", "unset"), callback=lambda a, b, c: self.checkBtnMergeStatus())
+        self.end_date_var.trace_add(mode=("write", "unset"), callback=lambda a, b, c: events.postEvent(EventType.ON_END_DATE_VAR_CHANGE))
 
         self.input_directory_text = tkinter.StringVar(self.window)
         self.save_location_text = tkinter.StringVar(self.window)
