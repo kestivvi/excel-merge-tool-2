@@ -210,7 +210,7 @@ def copy_VIP_Recruits_case(ws_out, ws_in, date_from, date_to):
         row_in += 1
         row_out += 1
 
-
+# TODO: Should delete lines in Director Basic working lines if there were some before
 # TODO: filenames argument is useless
 def copy_all(input_directory: str, filenames: List[str], path_to_save: str, date_from: datetime, date_to: datetime, set_progress_text_fn: Callable[[str], None]) -> None:
     
