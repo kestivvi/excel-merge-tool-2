@@ -199,7 +199,7 @@ def copy_VIP_Recruits_case(ws_out, ws_in, date_from, date_to):
             continue
         
         order_date = ws_in.cell(row=row_in, column=input_columns["End customers first order date"]).value
-        if not (date_from <= order_date and order_date <= date_to):
+        if (order_date is None) or (not (date_from <= order_date and order_date <= date_to)):
             row_in += 1
             continue
 
